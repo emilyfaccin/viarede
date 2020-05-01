@@ -1,0 +1,101 @@
+#:kivy 1.8.0
+#:import lg login_conn
+
+<FirstLayout>:
+
+  orientation: 'vertical'
+  spacing: 10
+  padding: [50, 50, 50, 50]
+
+  canvas:
+    Color:
+      rgba: 0.5, 0.5, 0.5, 0.5
+    Rectangle:
+      pos: self.pos
+      size: self.size
+      
+
+  BoxLayout:
+    spacing: 100
+    size_hint_y: None
+
+    Image:
+      source: 'g934.jpeg'
+
+
+  BoxLayout:
+
+  BoxLayout:
+    size_hint_y: None
+    height: 50
+
+    Label:
+      id: 'Usuario'
+      text: 'Usuario'
+      bold: True
+
+    TextInput:
+      id: txt_usuario
+      font_size: 15
+      multiline: False
+      write_tab: False
+      focus: True
+      size_hint: [5, 0.8]
+      pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+
+
+
+  BoxLayout:
+    size_hint_y: None
+    height: 50
+
+    Label:
+      id: 'Senha'
+      text: 'Senha'
+      bold: True
+
+    TextInput:
+      id: txt_senha
+      font_size: 15
+      multiline: False
+      write_tab: False
+      password: True
+      size_hint: [5, 0.8]
+      pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+  
+  BoxLayout:
+    spacing: 10
+    size_hint_y: None
+    
+    Button:
+      size_hint: .5,.45 #size hint input
+      text: 'Entrar'
+      font_size: 15
+      size_hint: [0.3, 0.5]
+      on_press: lg.entrar(lg.session, txt_usuario.text, txt_senha.text)
+
+    Button:
+      size_hint: .5,.45 #size hint input
+      text: 'Cancelar'
+      font_size: 15
+      size_hint: [0.3, 0.5]
+      on_press: root.fechar_app()
+
+
+  BoxLayout:
+
+
+    Label:
+      id: 'OU'
+      text: 'OU' 
+
+
+  BoxLayout:
+    size_hint_y: None
+
+    Button:
+      text: 'Cadastre-se'
+      font_size: 20
+      on_press: 
