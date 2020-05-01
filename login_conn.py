@@ -22,8 +22,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, primary_key=True)
     password = Column(String)
 
     def __repr__(self):
@@ -33,7 +32,7 @@ class User(Base):
     # def busca_por_nome(cls, session, name):
     #     return session.query(cls).filter_by(name=name).all()
 
-# Base.metadata.create_all(engine) não preciso mais em tese
+# Base.metadata.create_all(engine) em tese não preciso mais disso
 
 
 def busca(session, nome):
@@ -76,7 +75,7 @@ def entrar(session, usuario, senha):
     else:
         print('Tente novamente')
 
-inserir_usuario('usuario03', 'senha03')
+# inserir_usuario('usuario03', 'senha03')
 # inserir_usuario('usuario02', 'senha02')
 
 busca(session,'usuario03')

@@ -12,7 +12,10 @@ Window.size = (500, 650)
 
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen, ScreenManager
 
 from kivy.uix.button import Button
 from kivy.uix.label import Label
@@ -22,17 +25,38 @@ from kivy.uix.image import Image
 class TalkLayout(BoxLayout):
     pass
 
-class FirstLayout(BoxLayout):
+
+class Login(BoxLayout):
+
+    def novo_usuario(self):
+        conteudo = CadastroUsuarios()
+        popup = Popup(title='Cadastro de Usuários', content=conteudo,
+    size_hint=(None, None), size=(300, 300), auto_dismiss=False)
+    
+        popup.open()
+    
+    def cancelar_cadastro():
+        pass
+
 
     def fechar_app(self):
         App.get_running_app().stop()
         Window.close()
 
+
+class CadastroUsuarios(GridLayout): 
+    
+    def fechar_app(self):
+        App.get_running_app().stop()
+
+
 class Test(App):
     def build(self):
         self.icon = 'icon.jpeg'
         self.title = 'Login - VIA REDE'
-        return FirstLayout()
+        return Login()
+
 
 if __name__ == '__main__':
-    Test().run()
+    chatApp = Test()
+    chatApp.run()

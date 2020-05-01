@@ -1,7 +1,8 @@
 #:kivy 1.8.0
 #:import lg login_conn
+#:import mn main
 
-<FirstLayout>:
+<Login>:
 
   orientation: 'vertical'
   spacing: 10
@@ -98,4 +99,42 @@
     Button:
       text: 'Cadastre-se'
       font_size: 20
-      on_press: 
+      on_press: root.novo_usuario()
+
+
+# <Pop>:
+#   auto_dismiss: False
+  
+#   Label:
+#       text: 'Qualquer coisa'
+#       size_hint: 0.6, 0.2
+#       pos_hint: {'x': 0.2, 'top':1}
+
+<CadastroUsuarios>:
+  id: Cadastro
+  cols: 2
+  Label:
+    text: 'Usuario'
+  TextInput:
+    id: txt_cadastro_usuario
+    multiline: False
+
+  Label:
+    text: 'Digite uma senha'
+  TextInput:
+    id: txt_cadastro_senha01
+    multiline: False
+
+  Label:
+    text: 'Confirme a senha'
+  TextInput:
+    id: txt_cadastro_senha02
+    multiline: False
+
+  Button:
+    id: btn_confirmar_cadastro
+    text: 'Confirmar'
+
+  Button:
+    text: 'Cancelar'
+    on_press: root.fechar_app()
