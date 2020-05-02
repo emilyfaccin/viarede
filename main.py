@@ -10,6 +10,7 @@ Config.set('graphics', 'top',  70)
 from kivy.core.window import Window
 Window.size = (500, 650)
 
+from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
@@ -22,18 +23,11 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.image import Image
 
-class TalkLayout(BoxLayout):
+class ChatLayout(BoxLayout):
     pass
 
 
-class Login(BoxLayout):
-
-    def novo_usuario(self):
-        conteudo = CadastroUsuarios()
-        popup = Popup(title='Cadastro de Usuários', content=conteudo,
-    size_hint=(None, None), size=(300, 300), auto_dismiss=False)
-    
-        popup.open()
+class Login(Screen):
     
     def cancelar_cadastro():
         pass
@@ -44,17 +38,21 @@ class Login(BoxLayout):
         Window.close()
 
 
-class CadastroUsuarios(GridLayout): 
-    
-    def fechar_app(self):
-        App.get_running_app().stop()
+class CadastroUsuarios(Screen):
+    pass
 
+
+class WindowManager(ScreenManager):
+    pass
+
+
+kv = Builder.load_file('test.kv')
 
 class Test(App):
     def build(self):
         self.icon = 'icon.jpeg'
         self.title = 'Login - VIA REDE'
-        return Login()
+        return kv
 
 
 if __name__ == '__main__':
