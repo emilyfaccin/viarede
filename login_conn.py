@@ -60,7 +60,7 @@ def altera_usuario(User, nome, senha):
                 values(name=nome, password=senha)
 
 
-def entrar(session, usuario, senha):
+def autenticar_usuario(session, usuario, senha):
     lista = busca(session,usuario)
     pessoa = lista[0]
     user = pessoa.name

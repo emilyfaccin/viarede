@@ -2,10 +2,10 @@
 #:import lg login_conn
 #:import mn main
 
-WindowManager:
-  Login:
-  CadastroUsuarios:
-  ChatLayout:
+# WindowManager:
+#   Login:
+#   CadastroUsuarios:
+#   ChatLayout:
 
 <Login>:
   name: 'login'
@@ -77,7 +77,7 @@ WindowManager:
         text: 'Entrar'
         font_size: 15
         size_hint: [0.3, 0.5]
-        on_press: lg.entrar(lg.session, txt_usuario.text, txt_senha.text)
+        on_press: root.join_button(txt_usuario.text)
 
       Button:
         size_hint: .5,.45 #size hint input
@@ -99,9 +99,12 @@ WindowManager:
       Button:
         text: 'Cadastre-se'
         font_size: 20
-        on_release: 
-          app.root.current = 'cadastro'
+        on_press: 
+          root.ir_cadastro()
           root.manager.transition.direction = 'left'
+      #  on_release: 
+      #    app.root.current = 'cadastro'
+      #    root.manager.transition.direction = 'left'
 
 
 <CadastroUsuarios>:
@@ -134,60 +137,113 @@ WindowManager:
 
     Button:
       text: 'Cancelar'
-      on_release: 
-        app.root.current = 'login'
+      on_press: 
+        root.voltar_login()
         root.manager.transition.direction = 'right'
+      # on_release: 
+      #   app.root.current = 'login'
+      #   root.manager.transition.direction = 'right'
   
+# <ChatLayout>:
+#   name: 'chat'
+  # BoxLayout:
+  #   orientation: 'vertical'
+  #   spacing: 10
+  #   padding: [10, 10, 10, 10]
+
+  #   canvas:
+  #     Color:
+  #       rgba: 0.5, 0.5, 0.5, 0.5
+  #     Rectangle:
+  #       pos: self.pos
+  #       size: self.size
+
+
+  #   BoxLayout:
+  #     spacing: 10
+  #     size_hint_: 1.00,.80
+
+  #     canvas:
+  #       Color:
+  #         rgba: 0.7, 0.7, 0.7, 0.5
+  #       Rectangle:
+  #         pos: self.pos
+  #         size: self.size
+
+
+    # BoxLayout:
+    #   size_hint_y: None
+    #   height: 50
+    #   spacing: 10
+
+    #   Label:
+    #     id: lbl_historico
+    #     name: 'historico'
+
+    #   TextInput:
+    #     id: txt_mensagem
+    #     name: 'mensagem'
+    #     font_size: 15
+    #     multiline: True
+    #     write_tab: False
+    #     focus: True
+    #     size_hint: [5, .99]
+
+    #   Button:
+    #     id: btn_enviar
+    #     name: 'enviar'
+    #     size_hint: .5,.45 #size hint input
+    #     text: 'Enviar'
+    #     font_size: 15
+    #     size_hint: [0.3, 0.5]
+    #     on_press: root.enviar_mensagem()
+    #     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+      
+    #   Button:
+    #     size_hint: .5,.45 #size hint input
+    #     text: 'Anexar'
+    #     font_size: 15
+    #     size_hint: [0.3, 0.5]
+    #     on_press: print("Open Popup")
+    #     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
 <ChatLayout>:
   name: 'chat'
-  orientation: 'vertical'
-  spacing: 10
-  padding: [10, 10, 10, 10]
 
-  canvas:
-    Color:
-      rgba: 0.5, 0.5, 0.5, 0.5
-    Rectangle:
-      pos: self.pos
-      size: self.size
-
-
-  BoxLayout:
-    spacing: 10
-    size_hint_: 1.00,.80
-
-    canvas:
-      Color:
-        rgba: 0.7, 0.7, 0.7, 0.5
-      Rectangle:
-        pos: self.pos
-        size: self.size
-
-
-  BoxLayout:
-    size_hint_y: None
-    height: 50
-    spacing: 10
+  GridLayout:
+    cols: 1
+    rows: 2
 
     TextInput:
-      font_size: 15
-      multiline: True
-      write_tab: False
-      focus: True
-      size_hint: [5, .99]
+      name: 'history'
+      text: 'Fancy stuff here to come!!!'
+      readonly: True
 
-    Button:
-      size_hint: .5,.45 #size hint input
-      text: 'Enviar'
-      font_size: 15
-      size_hint: [0.3, 0.5]
-      on_press: print("Open Popup")
-      pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-    
-    Button:
-      size_hint: .5,.45 #size hint input
-      text: 'Anexar'
-      font_size: 15
-      size_hint: [0.3, 0.5]
-      on_press: print("Open Popup")
-      pos_hint: {'center_x': 0.5, 'center_y': 0.5}    
+    GridLayout:
+      cols: 2
+      size_hint: 0.2, 1
+      TextInput:
+        name: 'nova_mensagem'
+        multiline: True
+        size_hint: 1, 0.6
+
+      Button:
+        id: enviar_msg
+        name: 'enviar_msg'
+        text: 'Enviar'
+        on_press: root.enviar_mensagem()
+        size_hint: 1, 0.2
+
+<InfoPage>:
+  name: 'info'
+
+  GridLayout:
+    cols: 1
+
+    Label:
+      id: textao
+      halign: 'center'
+      valign: 'middle'
+      font_size: 30
+      text_size: self.size
+
