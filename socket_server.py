@@ -31,7 +31,7 @@ sockets_list = [server_socket]
 # List of connected clients - socket as a key, user header and name as data
 clients = {}
 
-print(f'Listening for connections on {IP}:{PORT}...')
+print(f'Aguardando conexões em {IP}:{PORT}...')
 
 # Handles message receiving
 def receive_message(client_socket):
@@ -97,7 +97,7 @@ while True:
             # Also save username and username header
             clients[client_socket] = user
 
-            print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
+            print('Nova conexão aceita de {}:{}, usuario: {}'.format(*client_address, user['data'].decode('utf-8')))
 
         # Else existing socket is sending a message
         else:
@@ -107,7 +107,7 @@ while True:
 
             # If False, client disconnected, cleanup
             if message is False:
-                print('Closed connection from: {}'.format(clients[notified_socket]['data'].decode('utf-8')))
+                print('Conexão encerrada de: {}'.format(clients[notified_socket]['data'].decode('utf-8')))
 
                 # Remove from list for socket.socket()
                 sockets_list.remove(notified_socket)

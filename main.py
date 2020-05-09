@@ -1,6 +1,6 @@
 import kivy 
 from kivy.app import App
-import login_conn
+import login_conn as lg
 import socket
 from kivy.clock import Clock
 import socket_client
@@ -27,6 +27,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.image import Image
+from kivy.uix.scrollview import ScrollView
 
 PORT = 1234
 PORT_AUTH = 1300
@@ -39,15 +40,22 @@ class Login(Screen):
 
     def conectar(self, _):
         porta = PORT
-        hostname = socket.gethostname()
-        ip = socket.gethostbyname(hostname)
+        # hostname = socket.gethostname()
+        # ip = socket.gethostbyname(hostname)
+        ip = '192.168.56.1'
         usuario = self.ids.txt_usuario.text
+        senha = self.ids.txt_senha.text
+
+        if not lg.autenticar_usuario(lg.session, usuario, senha):
+            print('Usuario ou senha inválidos. Tente novamente')
 
         if not socket_client.connect(ip, porta, usuario, mostrar_erro):
             return
 
         chatApp.criar_pagina_de_chat()
         chatApp.screen_manager.current = 'chat'
+
+       # ChatLayout.inicio_chat_historico(ChatLayout)
 
 
     def fechar_app(self):
@@ -63,6 +71,7 @@ class Login(Screen):
 
         Clock.schedule_once(self.conectar, 1)
 
+
 class CadastroUsuarios(Screen):
     
     def voltar_login(self):
@@ -70,14 +79,33 @@ class CadastroUsuarios(Screen):
 
 
 class ChatLayout(Screen):
-    
+
+    # por enquanto não consegui aplicar
+    def inicio_chat_historico(self):
+        self.ids.history.text = lg.trazer_historico_mensagens(lg.session)
+
+
     def enviar_mensagem(self):
-        print('MENSAGEM!!')
+        
+        try:
+            nova_msg = self.ids.nova_mensagem.text
+            usuario = 'usuario01'
+            self.ids.nova_mensagem.text = ''
+
+            # historico = self.ids.history.text
+            if nova_msg:
+                novo_historico =  self.ids.history.text + f'{usuario}: {nova_msg}'
+                self.ids.history.text = novo_historico
+                lg.inserir_nova_mensagem(nova_msg, usuario)
+                socket_client.send(nova_msg)
+        
+        except AttributeError as e:
+            print(e)
 
 
 class InfoPage(Screen):
 
-    # Called with a message, to update message text in widget
+    # Atualiza a mensagem exibida na tela de info
     def update_info(self, message):
         self.ids.textao.text = message
 
