@@ -5,6 +5,7 @@ import socket
 from kivy.clock import Clock
 import socket_client
 import sys
+import login_client
 
 from kivy.config import Config
 Config.set('graphics','resizable',0)
@@ -42,20 +43,25 @@ class Login(Screen):
         porta = PORT
         # hostname = socket.gethostname()
         # ip = socket.gethostbyname(hostname)
-        ip = '192.168.56.1'
+        ip = '192.168.1.6'
         usuario = self.ids.txt_usuario.text
         senha = self.ids.txt_senha.text
 
-        if not lg.autenticar_usuario(lg.session, usuario, senha):
-            print('Usuario ou senha inválidos. Tente novamente')
+        status = login_client.send(f'{usuario}:{senha}')
+        if status == '200':
+            print('Sweet success')
 
-        if not socket_client.connect(ip, porta, usuario, mostrar_erro):
-            return
+            if not socket_client.connect(ip, porta, usuario, mostrar_erro):
+                return
 
-        chatApp.criar_pagina_de_chat()
-        chatApp.screen_manager.current = 'chat'
+            chatApp.criar_pagina_de_chat()
+            chatApp.screen_manager.current = 'chat'
 
-       # ChatLayout.inicio_chat_historico(ChatLayout)
+        elif status == '401':
+            print('Senha inválida. Tente novamente')
+
+        elif status == '404':
+            print('Usuário não cadastrado')
 
 
     def fechar_app(self):

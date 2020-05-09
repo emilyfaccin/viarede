@@ -65,7 +65,8 @@ def busca(session, nome):
     return dados
 
 
-def mostra_todos_usuarios(lista_usuarios):
+def mostra_todos_usuarios(session):
+    lista_usuarios = session.query(Usuario).all()
     for usuario in lista_usuarios:
         print(usuario.__dict__)
 
@@ -97,11 +98,17 @@ def autenticar_usuario(session, usuario, senha):
         sh.update(senha.encode('utf-8'))
         hash_value = sh.hexdigest()
 
-        return True
-    
+        if usuario == user and hash_value == passwd:
+            print('200')
+            return '200'
+        else:
+            print('401')
+            return '401'
+
     except IndexError as e:
         print(e)
-        return False
+        print('404')
+        return '404'
 
 
 def inserir_nova_mensagem(nova_mensagem, usuario):
@@ -117,11 +124,13 @@ def trazer_historico_mensagens(session):
         historico += f'{mensagem.usuario}: {mensagem.dado} \n'
     return historico
 
-# inserir_usuario('usuario01', 'senha01')
-# inserir_usuario('usuario02', 'senha02')
+#mostra_todos_usuarios(session)
+#autenticar_usuario(session, 'usuario01', 'senha01')
+#inserir_usuario('usuario01', 'senha01')
+#inserir_usuario('usuario04', 'senha04')
 
 # inserir_nova_mensagem('Segunda mensagem de teste no histórico', 'usuario02')
-trazer_historico_mensagens(session)
+#trazer_historico_mensagens(session)
 
 
 # busca(session,'usuario03')
