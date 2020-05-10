@@ -9,18 +9,24 @@ hostname = socket.gethostname()
 IP = socket.gethostbyname(hostname)
 PORT = 1236
 
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as login_server:
+    login_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     login_server.bind((IP, PORT))
     login_server.listen()
     login_cliente, client_address = login_server.accept()
 
     with login_cliente:
         print('Connected by:', client_address)
-        
+
         while True:
             dados = login_cliente.recv(1024).decode('utf-8').split(':')
-            if not dados:
-                break
             print(dados)
-            status = lg.autenticar_usuario(lg.session, *dados)
-            login_cliente.send(status.encode('utf-8'))
+            if dados:
+                status = lg.autenticar_usuario(*dados)
+                login_cliente.sendall(status.encode('utf-8'))
+                login_cliente.close()
+                login_cliente, client_address = login_server.accept()
+            else:
+                status = '401'
+                login_cliente.sendall(status.encode('utf-8'))
