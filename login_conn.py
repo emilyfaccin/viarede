@@ -1,5 +1,6 @@
 import sqlite3
 from sqlalchemy import create_engine
+from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, LargeBinary
@@ -12,14 +13,17 @@ import hashlib
 
 # criando a engine - comunicação com o banco
 # echo=True indica que será printado no console o comando real executado
-engine = create_engine('sqlite:///viarede.db', echo=True)
+engine = create_engine('sqlite:///viarede.db', echo=True, poolclass=NullPool)
+Session = sessionmaker(bind=engine)
 
 # Para usar a ORM precisamos de uma sessão
-Session = sessionmaker(bind=engine)
-session = Session()
+def get_session():
+    session = Session()
+    return session
 
 
 Base = declarative_base()
+
 
 # representacao da tabela usuario
 class Usuario(Base):
@@ -46,6 +50,7 @@ class Mensagem(Base):
     def __repr__(self):
         return f'Mensagem {self.dado}'
 
+
 class Arquivo(Base):
     __tablename__ = 'arquivos'
 
@@ -60,36 +65,41 @@ class Arquivo(Base):
 # Base.metadata.create_all(engine)
 
 
-def busca(session, nome):
+def busca(nome):
+    session = get_session()
     dados = session.query(Usuario).filter_by(name=nome).all()
+    session.close()
     return dados
 
 
-def mostra_todos_usuarios(session):
+def mostra_todos_usuarios():
+    session = get_session()
     lista_usuarios = session.query(Usuario).all()
     for usuario in lista_usuarios:
         print(usuario.__dict__)
+    session.close()
 
 
 def inserir_usuario(usuario, senha):
+    session = get_session()
     sh = hashlib.sha1()
     sh.update(senha.encode('utf-8'))
     hash_value = sh.hexdigest()
     user = Usuario(name=usuario, password=hash_value)
     session.add(user)
     session.commit()
+    session.close()
 
 
-def altera_usuario(User, nome, senha):
-    update = User.update().\
-                where(User.name == nome).\
-                values(name=nome, password=senha)
+# def altera_usuario(User, nome, senha):
+#     update = User.update().\
+#                 where(User.name == nome).\
+#                 values(name=nome, password=senha)
 
 
-def autenticar_usuario(session, usuario, senha):
-    
+def autenticar_usuario(usuario, senha):
     try:
-        lista = busca(session,usuario)
+        lista = busca(usuario)
         pessoa = lista[0]
         user = pessoa.name
         passwd = pessoa.password
@@ -111,18 +121,24 @@ def autenticar_usuario(session, usuario, senha):
         return '404'
 
 
+
 def inserir_nova_mensagem(nova_mensagem, usuario):
+    session = get_session()
     mensagem = Mensagem(dado=nova_mensagem,usuario=usuario)
     session.add(mensagem)
     session.commit()
+    session.close()
 
 
-def trazer_historico_mensagens(session):
+def trazer_historico_mensagens():
+    session = get_session()
     hist = session.query(Mensagem).all()
+    session.close()
     historico = ''
     for mensagem in hist:
         historico += f'\n{mensagem.usuario}: {mensagem.dado}'
     return historico
+
 
 #mostra_todos_usuarios(session)
 #autenticar_usuario(session, 'usuario01', 'senha01')

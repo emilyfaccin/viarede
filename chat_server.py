@@ -105,7 +105,7 @@ while True:
 
             # If False, client disconnected, cleanup
             if message is False:
-                print('Conexão encerrada de: {}'.format(clients[notified_socket]['data'].decode('utf-8')))
+                #print('Conexão encerrada de: {}'.format(clients[notified_socket]['data'].decode('utf-8')))
 
                 # Remove from list for socket.socket()
                 sockets_list.remove(notified_socket)

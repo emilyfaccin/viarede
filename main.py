@@ -51,8 +51,8 @@ class Login(Screen):
         if status == '200':
             print('Sweet success')
 
-            if not chat_client.connect(ip, porta, usuario, mostrar_erro):
-                return
+            # if not chat_client.connect(ip, porta, usuario, mostrar_erro):
+            #     return
 
             chatApp.criar_pagina_de_chat()
             chatApp.screen_manager.current = 'chat'
@@ -88,7 +88,7 @@ class ChatLayout(Screen):
 
     # por enquanto não consegui aplicar
     def inicio_chat_historico(self):
-        self.ids.history.text = lg.trazer_historico_mensagens(lg.session)
+        self.ids.history.text = lg.trazer_historico_mensagens()
 
 
     def enviar_mensagem(self):
@@ -107,7 +107,7 @@ class ChatLayout(Screen):
         
         except AttributeError as e:
             print(e)
-            
+
 
 
 class InfoPage(Screen):
