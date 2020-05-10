@@ -3,7 +3,8 @@ from kivy.app import App
 import login_conn as lg
 import socket
 from kivy.clock import Clock
-import socket_client
+#import socket_client
+import chat_client
 import sys
 import login_client
 
@@ -35,7 +36,6 @@ PORT_AUTH = 1300
 
 
 class Login(Screen):
-
     def ir_cadastro(self):
         chatApp.screen_manager.current = 'cadastro'
 
@@ -51,7 +51,7 @@ class Login(Screen):
         if status == '200':
             print('Sweet success')
 
-            if not socket_client.connect(ip, porta, usuario, mostrar_erro):
+            if not chat_client.connect(ip, porta, usuario, mostrar_erro):
                 return
 
             chatApp.criar_pagina_de_chat()
@@ -70,10 +70,10 @@ class Login(Screen):
 
 
     def join_button(self, instancia):
-        porta = PORT
-        hostname = socket.gethostname()
-        ip = socket.gethostbyname(hostname)
-        usuario = self.ids.txt_usuario.text
+        # porta = PORT
+        # hostname = socket.gethostname()
+        # ip = socket.gethostbyname(hostname)
+        # usuario = self.ids.txt_usuario.text
 
         Clock.schedule_once(self.conectar, 1)
 
@@ -95,18 +95,19 @@ class ChatLayout(Screen):
         
         try:
             nova_msg = self.ids.nova_mensagem.text
-            usuario = 'usuario01'
+            # usuario = 'usuario'
             self.ids.nova_mensagem.text = ''
 
             # historico = self.ids.history.text
             if nova_msg:
-                novo_historico =  self.ids.history.text + f'{usuario}: {nova_msg}'
-                self.ids.history.text = novo_historico
-                lg.inserir_nova_mensagem(nova_msg, usuario)
-                socket_client.send(nova_msg)
+                # novo_historico =  self.ids.history.text + f'{usuario}: {nova_msg}'
+                # self.ids.history.text = novo_historico
+                # lg.inserir_nova_mensagem(nova_msg, usuario)
+                chat_client.send(nova_msg)
         
         except AttributeError as e:
             print(e)
+            
 
 
 class InfoPage(Screen):

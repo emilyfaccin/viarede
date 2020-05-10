@@ -121,12 +121,12 @@ def trazer_historico_mensagens(session):
     hist = session.query(Mensagem).all()
     historico = ''
     for mensagem in hist:
-        historico += f'{mensagem.usuario}: {mensagem.dado} \n'
+        historico += f'\n{mensagem.usuario}: {mensagem.dado}'
     return historico
 
 #mostra_todos_usuarios(session)
 #autenticar_usuario(session, 'usuario01', 'senha01')
-#inserir_usuario('usuario01', 'senha01')
+#inserir_usuario('usuario02', 'senha02')
 #inserir_usuario('usuario04', 'senha04')
 
 # inserir_nova_mensagem('Segunda mensagem de teste no histórico', 'usuario02')
