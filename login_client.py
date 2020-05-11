@@ -1,6 +1,8 @@
 import socket
+from main import SERVER_IP
 
-IP = '192.168.1.6'
+
+IP = SERVER_IP
 PORT = 1236
 
 login_cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
