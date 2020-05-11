@@ -90,18 +90,29 @@
     BoxLayout:
       Label:
         id: 'OU'
-        text: 'OU' 
+        text: 'OU'
+        markup: True
 
 
     BoxLayout:
       size_hint_y: None
 
       Button:
+        size_hint: .5,.45 #size hint input
         text: 'Cadastre-se'
         font_size: 20
         on_press: 
           root.ir_cadastro()
           root.manager.transition.direction = 'left'
+    
+    BoxLayout:
+      size_hint_y: None
+    
+      Button:
+        size_hint: .5,.45 #size hint input
+        text: 'Esqueci minha senha.'
+        font_size: 15
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 
 <CadastroUsuarios>:

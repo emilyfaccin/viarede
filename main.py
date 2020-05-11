@@ -45,8 +45,6 @@ class Login(Screen):
 
     def conectar(self, _):
         porta = PORT
-        # hostname = socket.gethostname()
-        # ip = socket.gethostbyname(hostname)
         ip = SERVER_IP
         usuario = self.ids.txt_usuario.text
         senha = self.ids.txt_senha.text
@@ -74,10 +72,6 @@ class Login(Screen):
 
 
     def join_button(self, instancia):
-        # porta = PORT
-        # hostname = socket.gethostname()
-        # ip = socket.gethostbyname(hostname)
-        # usuario = self.ids.txt_usuario.text
 
         Clock.schedule_once(self.conectar, 1)
 
