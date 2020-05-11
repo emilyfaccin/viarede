@@ -3,10 +3,10 @@ from kivy.app import App
 import login_conn as lg
 import socket
 from kivy.clock import Clock
-#import socket_client
 import chat_client
 import sys
 import login_client
+import sys
 
 from kivy.config import Config
 Config.set('graphics','resizable',0)
@@ -31,8 +31,12 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.image import Image
 from kivy.uix.scrollview import ScrollView
 
+
 PORT = 1234
-PORT_AUTH = 1300
+try:
+    SERVER_IP = sys.argv[1]
+except:
+    raise AttributeError('IP do servidor não informado')
 
 
 class Login(Screen):
@@ -43,7 +47,7 @@ class Login(Screen):
         porta = PORT
         # hostname = socket.gethostname()
         # ip = socket.gethostbyname(hostname)
-        ip = '192.168.1.6'
+        ip = SERVER_IP
         usuario = self.ids.txt_usuario.text
         senha = self.ids.txt_senha.text
 
@@ -51,8 +55,8 @@ class Login(Screen):
         if status == '200':
             print('Sweet success')
 
-            # if not chat_client.connect(ip, porta, usuario, mostrar_erro):
-            #     return
+            if not chat_client.connect(ip, porta, usuario, mostrar_erro):
+                return
 
             chatApp.criar_pagina_de_chat()
             chatApp.screen_manager.current = 'chat'
@@ -90,6 +94,8 @@ class ChatLayout(Screen):
     def inicio_chat_historico(self):
         self.ids.history.text = lg.trazer_historico_mensagens()
 
+    def adiciona_chat_historico(self, mensagem):
+        self.ids.history.text += f'\n{mensagem}'
 
     def enviar_mensagem(self):
         
@@ -144,4 +150,6 @@ def mostrar_erro(message):
 
 if __name__ == '__main__':
     chatApp = Test()
+    from pprint import pprint
+    pprint(locals())
     chatApp.run()

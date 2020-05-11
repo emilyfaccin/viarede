@@ -1,8 +1,18 @@
 import socket
 import errno
 from threading import Thread
+import select
+from kivy.app import App
 
 client_socket = None
+
+def listen(incoming_message_callback, error_callback):
+    while True:
+        mensagem = client_socket.recv(1024).decode('utf-8')
+        print(mensagem)
+        app = App.get_running_app()
+        app.screen_manager.get_screen(name='chat').adiciona_chat_historico(mensagem)
+
 
 # Connects to the server
 def connect(ip, port, my_username, error_callback):
@@ -26,6 +36,7 @@ def connect(ip, port, my_username, error_callback):
     # We need to encode username to bytes, then count number of bytes and prepare header of fixed size, that we encode to bytes as well
     username = my_username.encode('utf-8')
     client_socket.send(username)
+    start_listening(print, print)
 
     return True
 
@@ -43,26 +54,26 @@ def start_listening(incoming_message_callback, error_callback):
     Thread(target=listen, args=(incoming_message_callback, error_callback), daemon=True).start()
 
 # Listens for incomming messages
-def listen(incoming_message_callback, error_callback):
-    while True:
+# def listen(incoming_message_callback, error_callback):
+#     while True:
 
-        try:
-            # Now we want to loop over received messages (there might be more than one) and print them
-            while True:
+#         try:
+#             # Now we want to loop over received messages (there might be more than one) and print them
+#             while True:
                 
-                # Receive and decode username
-                dados = client_socket.recv(6000).decode('utf-8').split(':')
-                username = dados[0]
-                message = dados[1]
+#                 # Receive and decode username
+#                 dados = client_socket.recv(6000).decode('utf-8').split(':')
+#                 username = dados[0]
+#                 message = dados[1]
 
-                # If we received no data, server gracefully closed a connection, for example using socket.close() or socket.shutdown(socket.SHUT_RDWR)
-                if not len(message):
-                    error_callback('Connection closed by the server')
+#                 # If we received no data, server gracefully closed a connection, for example using socket.close() or socket.shutdown(socket.SHUT_RDWR)
+#                 if not len(message):
+#                     error_callback('Connection closed by the server')
 
 
-                # Print message
-                incoming_message_callback(username, message)
+#                 # Print message
+#                 incoming_message_callback(username, message)
 
-        except Exception as e:
-            # Any other exception - something happened, exit
-            error_callback('Reading error: {}'.format(str(e)))
+#         except Exception as e:
+#             # Any other exception - something happened, exit
+#             error_callback('Reading error: {}'.format(str(e)))

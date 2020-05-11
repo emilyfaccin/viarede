@@ -127,11 +127,12 @@ while True:
             for client_socket in clients:
 
                 # But don't sent it to sender
-                if client_socket != notified_socket:
+                # if client_socket != notified_socket:
 
                     # Send user and message (both with their headers)
                     # We are reusing here message header sent by sender, and saved username header send by user when he connected
-                    client_socket.send(user + message)
+                client_socket.send(f'{user}:{message}'.encode('utf-8'))
+                print('Broadcast', message, 'para', user,)
 
     # It's not really necessary to have this, but will handle some socket exceptions just in case
     for notified_socket in exception_sockets:
