@@ -33,10 +33,11 @@ from kivy.uix.scrollview import ScrollView
 
 
 PORT = 1234
-try:
-    SERVER_IP = sys.argv[1]
-except:
-    raise AttributeError('IP do servidor não informado')
+# try:
+#     SERVER_IP = sys.argv[1]
+# except:
+#     raise AttributeError('IP do servidor não informado')
+SERVER_IP = '192.168.56.1'
 
 
 class Login(Screen):
@@ -49,7 +50,8 @@ class Login(Screen):
         usuario = self.ids.txt_usuario.text
         senha = self.ids.txt_senha.text
 
-        status = login_client.send(f'{usuario}:{senha}')
+        # A vai como cabeçalho para autenticar
+        status = login_client.send(f'A:{usuario}:{senha}')
         if status == '200':
             print('Sweet success')
 
@@ -80,13 +82,59 @@ class CadastroUsuarios(Screen):
     
     def voltar_login(self):
         chatApp.screen_manager.current = 'login'
+        self.ids.txt_cadastro_usuario.text = ''
+        self.ids.txt_cadastro_senha01.text = ''
+        self.ids.txt_cadastro_senha02.text = ''
+
+
+    def cadastrar_usuario(self):
+        usuario = self.ids.txt_cadastro_usuario.text
+        senha = self.ids.txt_cadastro_senha01.text
+        confirm_senha = self.ids.txt_cadastro_senha02.text
+
+        if usuario.strip() == '' or senha.strip() == '':
+            em_branco = Popup(title='Preencha todos os campos!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='Campos usuário / senha\nnão podem ser vazios',
+                font_size=20))
+            em_branco.open()
+            return
+
+        # I vai como cabeçalho para inserir
+        if senha != confirm_senha:
+            senha_dif = Popup(title='Atenção!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='As senhas digitadas\nnão coincidem',
+                font_size=20))
+            senha_dif.open()
+            print('Senhas não conferem')
+        else:
+            status = login_client.send(f'I:{usuario}:{senha}')
+            print(f'{status}')
+            if status == '200':
+                print('Usuario cadastrado com sucesso')
+                cadastro_ok = Popup(title='Sucesso!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='Usuário cadastrado com\nsucesso. Faça o login',
+                font_size=20))
+                cadastro_ok.open()
+
+            elif status == '409':
+                print('Usuario ja cadastrado. Resete sua senha se necessario')
+                ja_cadastrado = Popup(title='Atenção!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='Usuário já cadastrado\nResete sua senha se\nnecessario',
+                font_size=20))
+                ja_cadastrado.open()
+            self.voltar_login()
+            
 
 
 class ChatLayout(Screen):
 
-    # por enquanto não consegui aplicar
-    def inicio_chat_historico(self):
-        self.ids.history.text = lg.trazer_historico_mensagens()
+    # mudar de acesso direto ao banco para através do server
+    # def inicio_chat_historico(self):
+    #     self.ids.history.text = lg.trazer_historico_mensagens()
 
     def adiciona_chat_historico(self, mensagem):
         self.ids.history.text += f'\n{mensagem}'
@@ -144,6 +192,4 @@ def mostrar_erro(message):
 
 if __name__ == '__main__':
     chatApp = Test()
-    from pprint import pprint
-    pprint(locals())
     chatApp.run()

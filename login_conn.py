@@ -7,6 +7,7 @@ from sqlalchemy import Column, Integer, String, LargeBinary
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 import hashlib
+from sqlalchemy.exc import IntegrityError
 
 # encode = utf-8
 
@@ -86,9 +87,18 @@ def inserir_usuario(usuario, senha):
     sh.update(senha.encode('utf-8'))
     hash_value = sh.hexdigest()
     user = Usuario(name=usuario, password=hash_value)
-    session.add(user)
-    session.commit()
-    session.close()
+    try:
+        session.add(user)
+        session.commit()
+        session.close()
+        return '200'
+    except IntegrityError as e:
+        # 409 conflict
+        session.close()
+        print(e)
+        return '409'
+    
+    
 
 
 # def altera_usuario(User, nome, senha):
@@ -121,6 +131,16 @@ def autenticar_usuario(usuario, senha):
         return '404'
 
 
+def triagem(id, usuario, senha):
+    # A = autenticar
+    # I = inserir
+
+    if id == 'A':
+        status = autenticar_usuario(usuario, senha)
+    elif id == 'I':
+        status = inserir_usuario(usuario, senha)
+    return status
+
 
 def inserir_nova_mensagem(nova_mensagem, usuario):
     session = get_session()
@@ -140,7 +160,7 @@ def trazer_historico_mensagens():
     return historico
 
 
-#mostra_todos_usuarios(session)
+mostra_todos_usuarios()
 #autenticar_usuario(session, 'usuario01', 'senha01')
 #inserir_usuario('usuario02', 'senha02')
 #inserir_usuario('usuario04', 'senha04')
