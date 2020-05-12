@@ -23,10 +23,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as login_server:
             dados = login_cliente.recv(1024).decode('utf-8').split(':')
             print(dados)
             if dados:
-                status = lg.autenticar_usuario(*dados)
-                login_cliente.sendall(status.encode('utf-8'))
+                status = lg.triagem(*dados)
+                login_cliente.send(status.encode('utf-8'))
                 login_cliente.close()
                 login_cliente, client_address = login_server.accept()
             else:
                 status = '401'
-                login_cliente.sendall(status.encode('utf-8'))
+                login_cliente.send(status.encode('utf-8'))
