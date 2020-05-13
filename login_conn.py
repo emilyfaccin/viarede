@@ -8,6 +8,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 import hashlib
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 # encode = utf-8
 
@@ -99,12 +100,20 @@ def inserir_usuario(usuario, senha):
         return '409'
     
     
-
-
-# def altera_usuario(User, nome, senha):
-#     update = User.update().\
-#                 where(User.name == nome).\
-#                 values(name=nome, password=senha)
+def alterar_usuario(nome, senha):
+    session = get_session()
+    try:
+        usuario = session.query(Usuario).filter(Usuario.name == nome).one()
+        sh = hashlib.sha1()
+        sh.update(senha.encode('utf-8'))
+        hash_value = sh.hexdigest()
+        usuario.password = hash_value
+        session.commit()
+        return '200'
+    except NoResultFound as e:
+        print(e)
+        session.close()
+        return '404'
 
 
 def autenticar_usuario(usuario, senha):
@@ -134,11 +143,14 @@ def autenticar_usuario(usuario, senha):
 def triagem(id, usuario, senha):
     # A = autenticar
     # I = inserir
+    # R = resetar senha
 
     if id == 'A':
         status = autenticar_usuario(usuario, senha)
     elif id == 'I':
         status = inserir_usuario(usuario, senha)
+    elif id == 'R':
+        status = alterar_usuario(usuario, senha)
     return status
 
 
@@ -160,14 +172,14 @@ def trazer_historico_mensagens():
     return historico
 
 
-mostra_todos_usuarios()
+#mostra_todos_usuarios()
 #autenticar_usuario(session, 'usuario01', 'senha01')
 #inserir_usuario('usuario02', 'senha02')
 #inserir_usuario('usuario04', 'senha04')
 
 # inserir_nova_mensagem('Segunda mensagem de teste no histórico', 'usuario02')
 #trazer_historico_mensagens(session)
-
+#print(alterar_usuario('user', 'user'))
 
 # busca(session,'usuario03')
 # usuarios = busca(session, 'usuario03')

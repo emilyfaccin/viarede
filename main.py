@@ -41,8 +41,7 @@ SERVER_IP = '192.168.56.1'
 
 
 class Login(Screen):
-    def ir_cadastro(self):
-        chatApp.screen_manager.current = 'cadastro'
+
 
     def conectar(self, _):
         porta = PORT
@@ -62,9 +61,19 @@ class Login(Screen):
             chatApp.screen_manager.current = 'chat'
 
         elif status == '401':
+            senha_incorreta = Popup(title='Atenção!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='Senha incorreta.\nTente novamente',
+                font_size=20))
+            senha_incorreta.open()
             print('Senha inválida. Tente novamente')
 
         elif status == '404':
+            nao_cadastrado = Popup(title='Atenção!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='Usuário não cadastrado.\nRegistre-se',
+                font_size=20))
+            nao_cadastrado.open()
             print('Usuário não cadastrado')
 
 
@@ -127,7 +136,48 @@ class CadastroUsuarios(Screen):
                 font_size=20))
                 ja_cadastrado.open()
             self.voltar_login()
-            
+
+class AlteraUsuarios(Screen):
+
+    def voltar_login(self):
+        chatApp.screen_manager.current = 'login'
+        self.ids.txt_altera_usuario.text = ''
+        self.ids.txt_altera_senha01.text = ''
+        self.ids.txt_altera_senha02.text = ''
+
+    
+    def resetar_senha(self):
+        usuario = self.ids.txt_altera_usuario.text
+        nova_senha = self.ids.txt_altera_senha01.text
+        confirm_nova_senha = self.ids.txt_altera_senha02.text
+
+        # se as senhas digitadas forem diferentes, popup
+        if nova_senha != confirm_nova_senha:
+            senha_dif = Popup(title='Atenção!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='As senhas digitadas\nnão coincidem',
+                font_size=20))
+            senha_dif.open()
+            print('Senhas não conferem')
+        else:
+            status = login_client.send(f'R:{usuario}:{nova_senha}')
+            # usuario ecziste faz update no banco
+            if status == '200':
+                print('Senha resetada com sucesso')
+                reset_ok = Popup(title='Sucesso!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='Senha resetada com\nsucesso. Faça o login',
+                font_size=20))
+                reset_ok.open()
+            # usuario digitado no ecziste
+            elif status == '404':
+                print('Usuario não cadastrado. Cadastre-se')
+                nao_cadastrado = Popup(title='Atenção!', 
+                size_hint=(None, None), size=(300, 300),
+                content=Label(text='Usuário não cadastrado\nCadastre-se',
+                font_size=20))
+                nao_cadastrado.open()
+            self.voltar_login()            
 
 
 class ChatLayout(Screen):
@@ -174,6 +224,7 @@ class Test(App):
 
         self.screen_manager.add_widget(Login(name='login'))
         self.screen_manager.add_widget(CadastroUsuarios(name='cadastro'))
+        self.screen_manager.add_widget(AlteraUsuarios(name='altera'))
 
         self.info_page = InfoPage()
         screen = Screen(name='info')
