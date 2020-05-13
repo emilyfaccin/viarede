@@ -2,11 +2,6 @@
 #:import lg login_conn
 #:import mn main
 
-# WindowManager:
-#   Login:
-#   CadastroUsuarios:
-#   ChatLayout:
-
 <Login>:
   name: 'login'
   BoxLayout:
@@ -26,7 +21,7 @@
       size_hint_y: None
 
       Image:
-        source: 'g934.jpeg'
+        source: 'g934.png'
 
     BoxLayout:
 
@@ -72,47 +67,50 @@
       spacing: 10
       size_hint_y: None
       
-      Button:
+      SmoothButton:
         size_hint: .5,.45 #size hint input
         text: 'Entrar'
         font_size: 15
         size_hint: [0.3, 0.5]
         on_press: root.join_button(txt_usuario.text)
+        back_color: (0.7, 0.7, 0.7, 0.5)
 
-      Button:
+      SmoothButton:
         size_hint: .5,.45 #size hint input
         text: 'Cancelar'
         font_size: 15
         size_hint: [0.3, 0.5]
         on_press: root.fechar_app()
-
-
-    BoxLayout:
-      Label:
-        id: 'OU'
-        text: 'OU'
-        markup: True
+        back_color: (0.7, 0.7, 0.7, 0.5)
 
 
     BoxLayout:
       size_hint_y: None
 
-      Button:
+      SmoothButton:
         size_hint: .5,.45 #size hint input
         text: 'Cadastre-se'
         font_size: 20
+        back_color: (0.7, 0.7, 0.7, 0.5)
         on_press: 
-          root.ir_cadastro()
+          # root.ir_cadastro()
+          app.root.current = 'cadastro'
           root.manager.transition.direction = 'left'
     
     BoxLayout:
       size_hint_y: None
-    
-      Button:
+   
+      SmoothButton:
         size_hint: .5,.45 #size hint input
         text: 'Esqueci minha senha.'
         font_size: 15
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        back_color: (0.7, 0.7, 0.7, 0.5)
+
+        on_press:
+          # root.ir_alteracao()
+          app.root.current = 'altera'
+          root.manager.transition.direction = 'left'
 
 
 <CadastroUsuarios>:
@@ -126,18 +124,23 @@
     TextInput:
       id: txt_cadastro_usuario
       multiline: False
+      write_tab: False
 
     Label:
       text: 'Digite uma senha'
     TextInput:
       id: txt_cadastro_senha01
+      password: True
       multiline: False
+      write_tab: False
 
     Label:
       text: 'Confirme a senha'
     TextInput:
       id: txt_cadastro_senha02
+      password: True
       multiline: False
+      write_tab: False
 
     Button:
       id: btn_confirmar_cadastro
@@ -149,38 +152,122 @@
       on_press: 
         root.voltar_login()
         root.manager.transition.direction = 'right'
-      # on_release: 
-      #   app.root.current = 'login'
-      #   root.manager.transition.direction = 'right'
+
+
+<AlteraUsuarios>:
+  name: 'altera'
+  
+  GridLayout:
+    cols: 2
+    
+    Label:
+      text: 'Usuario'
+    TextInput:
+      id: txt_altera_usuario
+      multiline: False
+      write_tab: False
+
+    Label:
+      text: 'Digite a nova senha'
+    TextInput:
+      id: txt_altera_senha01
+      password: True
+      multiline: False
+      write_tab: False
+
+    Label:
+      text: 'Confirme a nova senha'
+    TextInput:
+      id: txt_altera_senha02
+      password: True
+      multiline: False
+
+    Button:
+      id: btn_confirmar_alteracao
+      text: 'Confirmar'
+      on_release: root.resetar_senha()
+      back_color: (0.7, 0.7, 0.7, 0.5)
+
+    Button:
+      text: 'Cancelar'
+      on_press: 
+        root.voltar_login()
+        root.manager.transition.direction = 'right'
+
+
+<SmoothButton@Button>:
+  background_color: (0, 0, 0, 0)
+  background_normal: ''
+  back_color: (1, 1, 1, 1)
+  border_radius: [14]
+  canvas.before:
+    Color:
+      rgba: self.back_color
+    RoundedRectangle:
+      size: self.size
+      pos: self.pos
+      radius: self.border_radius
+
 
 <ChatLayout>:
   name: 'chat'
-  
-  GridLayout:
-    cols: 1
-    rows: 2
 
-    TextInput:
-      id: history
-      #name: 'history'
-      readonly: True
-      # text: lg.trazer_historico_mensagens(lg.session)
+  BoxLayout:
+    orientation: 'vertical'
+    spacing: 10
+    padding: [10, 10, 10, 10]
 
-    GridLayout:
-      cols: 2
-      size_hint: 0.2, 1
+    canvas:
+      Color:
+        rgba: 0.5, 0.5, 0.5, 0.5
+      Rectangle:
+        pos: self.pos
+        size: self.size
+
+    BoxLayout:
+      spacing: 10
+
+      TextInput:
+        id: history
+        size_hint: .5,.95 #size hint input
+        multiline: True
+        pos: self.pos
+        size: self.size
+        write_tab: False
+        readonly: True
+
+    BoxLayout:
+      size_hint_y: None
+      height: 50
+      spacing: 10
+
       TextInput:
         id: nova_mensagem
-        #name: 'nova_mensagem'
+        font_size: 15
         multiline: True
-        size_hint: 1, 0.6
+        write_tab: False
+        focus: True
+        size_hint: [2, .99]
 
-      Button:
+      SmoothButton:
+        size_hint: .5,.45 #size hint input
+        text: 'Anexar'
+        font_size: 15
+        size_hint: [0.3, 0.5]
+        on_press: print("Open Popup")
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        back_color: (0.7, 0.7, 0.7, 0.5) 
+      
+      SmoothButton:
         id: enviar_msg
-        #name: 'enviar_msg'
+        size_hint: .5,.45 #size hint input
         text: 'Enviar'
+        font_size: 15
+        size_hint: [0.3, 0.5]
         on_press: root.enviar_mensagem()
-        size_hint: 1, 0.2
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        back_color: (0.7, 0.7, 0.7, 0.5)
+
 
 <InfoPage>:
   name: 'info'
@@ -194,4 +281,3 @@
       valign: 'middle'
       font_size: 30
       text_size: self.size
-
