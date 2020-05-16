@@ -199,7 +199,7 @@
   background_color: (0, 0, 0, 0)
   background_normal: ''
   back_color: (1, 1, 1, 1)
-  border_radius: [14]
+  border_radius: [8]
   canvas.before:
     Color:
       rgba: self.back_color
@@ -223,13 +223,26 @@
       Rectangle:
         pos: self.pos
         size: self.size
+    
+    BoxLayout:
+      id: menubar
+      size_hint: 0.5, 0.07
+      spacing: 10
+      SmoothButton:
+        text: 'Arquivos'
+        back_color: (0.7, 0.7, 0.7, 0.5)
+        on_release: root.abrir()
+      SmoothButton:
+        text: 'Deslogar'
+        back_color: (0.7, 0.7, 0.7, 0.5)
+        on_release: root.logout()
 
     BoxLayout:
       spacing: 10
 
       TextInput:
         id: history
-        size_hint: .5,.95 #size hint input
+        size_hint: 0.5, 0.95 #size hint input
         multiline: True
         pos: self.pos
         size: self.size
@@ -247,14 +260,14 @@
         multiline: True
         write_tab: False
         focus: True
-        size_hint: [2, .99]
+        size_hint: (2, .99)
 
       SmoothButton:
         size_hint: .5,.45 #size hint input
         text: 'Anexar'
         font_size: 15
-        size_hint: [0.3, 0.5]
-        on_press: print("Open Popup")
+        size_hint: (0.3, 0.5)
+        on_release: root.show_load()
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         back_color: (0.7, 0.7, 0.7, 0.5) 
       
@@ -267,6 +280,26 @@
         on_press: root.enviar_mensagem()
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         back_color: (0.7, 0.7, 0.7, 0.5)
+
+
+<LoadDialog>:
+  BoxLayout:
+    size: root.size
+    pos: root.pos
+    orientation: "vertical"
+    FileChooserListView:
+      id: filechooser
+
+    BoxLayout:
+      size_hint_y: None
+      height: 30
+      Button:
+        text: "Cancelar"
+        on_release: root.cancel()
+
+      Button:
+        text: "Abrir"
+        on_release: root.load(filechooser.path, filechooser.selection)
 
 
 <InfoPage>:

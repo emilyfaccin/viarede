@@ -17,7 +17,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as login_server:
     login_cliente, client_address = login_server.accept()
 
     with login_cliente:
-        print('Connected by:', client_address)
+        print('Conexão recebida de:', client_address)
 
         while True:
             dados = login_cliente.recv(1024).decode('utf-8').split(':')

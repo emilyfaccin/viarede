@@ -5,7 +5,6 @@ SERVER_IP = '192.168.56.1' #
 IP = SERVER_IP
 PORT = 1236
 
-#login_cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def send(dados):
     login_cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)#
