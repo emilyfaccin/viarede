@@ -9,6 +9,7 @@ from sqlalchemy.orm import relationship
 import hashlib
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
+# from main import super_user
 
 # encode = utf-8
 
@@ -57,6 +58,7 @@ class Arquivo(Base):
     __tablename__ = 'arquivos'
 
     id = Column(Integer, primary_key=True)
+    nome = Column(String)
     binario = Column(LargeBinary)
     usuario = Column(String, ForeignKey('usuarios.name'), nullable=False)
     user = relationship('Usuario')
@@ -91,13 +93,13 @@ def inserir_usuario(usuario, senha):
     try:
         session.add(user)
         session.commit()
-        session.close()
         return '200'
     except IntegrityError as e:
         # 409 conflict
-        session.close()
         print(e)
         return '409'
+    finally:
+        session.close()
     
     
 def alterar_usuario(nome, senha):
@@ -112,8 +114,9 @@ def alterar_usuario(nome, senha):
         return '200'
     except NoResultFound as e:
         print(e)
-        session.close()
         return '404'
+    finally:
+        session.close()
 
 
 def autenticar_usuario(usuario, senha):
@@ -171,6 +174,49 @@ def trazer_historico_mensagens():
         historico += f'\n{mensagem.usuario}: {mensagem.dado}'
     return historico
 
+
+def triagem_arquivos(cabecalho, user, name=None, binary=None):
+    # G = GET
+    # P = POST
+    # D = DOWNLOAD
+    if cabecalho == 'G':
+        status = get_arquivos()
+    elif cabecalho == 'P':
+        status = gravar_arquivo(nome=name, binario=binary, usuario=user)
+    elif cabecalho == 'D':
+        status = acessa_arquivo_por_nome(name)
+    return status
+
+
+def gravar_arquivo(nome, binario, usuario):
+    session = get_session()
+    arquivo = Arquivo(nome=nome, binario=binario, usuario=usuario)
+    # try:
+    session.add(arquivo)
+    session.commit()
+    return '200'
+    # except:
+
+    # finally:
+        # session.close()
+
+
+def get_arquivos():
+    session = get_session()
+    # lista com todos os arquivos salvos
+    arquivos = session.query(Arquivo).all()
+    session.close()
+    return arquivos
+
+
+def acessa_arquivo_por_nome(nome):
+    session = get_session()
+    arquivo = session.query(Arquivo).filter_by(nome=nome).one()
+    print(arquivo.id, arquivo.nome, arquivo.usuario)
+    return arquivo
+
+
+#acessa_arquivo_por_nome('610 ADM - BOLETO 10 (04-2020).pdf')
 
 #mostra_todos_usuarios()
 #autenticar_usuario(session, 'usuario01', 'senha01')
