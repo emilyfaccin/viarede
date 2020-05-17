@@ -64,7 +64,7 @@ class Arquivo(Base):
     user = relationship('Usuario')
 
     def __repr__(self):
-        return f'Arquivo {self.id}'
+        return f'Arquivo {self.nome}'
 
 # Base.metadata.create_all(engine)
 
@@ -167,24 +167,31 @@ def inserir_nova_mensagem(nova_mensagem, usuario):
 
 def trazer_historico_mensagens():
     session = get_session()
-    hist = session.query(Mensagem).all()
-    session.close()
-    historico = ''
-    for mensagem in hist:
-        historico += f'\n{mensagem.usuario}: {mensagem.dado}'
-    return historico
+    try:
+        hist = session.query(Mensagem).all()
+        historico = ''
+        for mensagem in hist:
+            historico += f'\n{mensagem.usuario}: {mensagem.dado}'
+        return historico
+    except:
+        return '404'
+    finally:
+        session.close()
 
 
 def triagem_arquivos(cabecalho, user, name=None, binary=None):
     # G = GET
     # P = POST
     # D = DOWNLOAD
+    # H = HISTORY
     if cabecalho == 'G':
         status = get_arquivos()
     elif cabecalho == 'P':
         status = gravar_arquivo(nome=name, binario=binary, usuario=user)
     elif cabecalho == 'D':
         status = acessa_arquivo_por_nome(name)
+    elif cabecalho == 'H':
+        status = trazer_historico_mensagens()
     print(status)
     return status
 
@@ -216,6 +223,7 @@ def acessa_arquivo_por_nome(nome):
 
     return arquivo
 
+print(triagem_arquivos('H', 'user'))
 # l = triagem_arquivos('G', 'usuario')
 # print(list(map(type, l)))
 # # print(type(l))
