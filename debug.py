@@ -4,12 +4,17 @@ import login_conn
 import pickle
 
 
-dados = ['G', 'usuario']
+usuario = 'usuario'
+dados = ['H', usuario]
 msg = pickle.dumps(dados)
 resultado = file_client.send(msg)
-arquivos = pickle.loads(resultado)
+status = pickle.loads(resultado)
 
+print(dados)
 print(type(dados))
+print(msg)
 print(type(msg))
+print(resultado)
 print(type(resultado))
-print(type(arquivos))
+print(status)
+print(type(status))

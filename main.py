@@ -75,6 +75,7 @@ class Login(Screen):
 
             chatApp.criar_pagina_de_chat()
             chatApp.screen_manager.current = 'chat'
+            chatApp.screen_manager.get_screen(name='chat').inicio_chat_historico()
 
         elif status == '401':
             senha_incorreta = Popup(title='Atenção!', 
@@ -207,12 +208,18 @@ class ChatLayout(Screen):
     def dismiss_popup(self):
         self._popup.dismiss()
 
-    # mudar de acesso direto ao banco para através do server
-    # def inicio_chat_historico(self):
-    #     self.ids.history.text = lg.trazer_historico_mensagens()
 
-    def adiciona_chat_historico(self, mensagem):
-        self.ids.history.text += f'\n{mensagem}'
+    def inicio_chat_historico(self):
+        global usuario
+        dados = ['H', usuario]
+        msg = pickle.dumps(dados)
+        resultado = file_client.send(msg)
+        status = pickle.loads(resultado)
+        self.ids.history.text = status
+
+
+    # def adiciona_chat_historico(self, mensagem):
+    #     self.ids.history.text += f'\n{mensagem}'
 
 
     def enviar_mensagem(self):
@@ -259,8 +266,6 @@ class ChatLayout(Screen):
         self._popup = Popup(title="Baixar arquivo", content=content,
                             size_hint=(0.7, 0.7))
         self._popup.open()
-        # chatApp.criar_tabela_arquivos()
-        # chatApp.screen_manager.current = 'arquivos'
     
     
     def download(self, nome):
