@@ -23,10 +23,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as file_server:
             print(dados)
             if dados:
                 status = lg.triagem_arquivos(*dados)
+                print(type(status))
                 # se o status for 200 a op feita foi gravar arquivo
                 # if status == '200':
                 msg = pickle.dumps(status)
                 file_cliente.send(msg)
+                print(type(msg))
                 file_cliente.close()
                 file_cliente, client_address = file_server.accept()
                 # se o status for diferente de 200 a op feita foi buscar arquivos
