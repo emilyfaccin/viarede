@@ -11,5 +11,6 @@ def send(dados):
     login_cliente.connect((IP, PORT))
     login_cliente.sendall(dados.encode('utf-8'))
     status = login_cliente.recv(30).decode('utf-8')
+    print(type(status))
     login_cliente.close()
     return status

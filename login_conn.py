@@ -64,7 +64,7 @@ class Arquivo(Base):
     user = relationship('Usuario')
 
     def __repr__(self):
-        return f'Mensagem {self.id}'
+        return f'Arquivo {self.id}'
 
 # Base.metadata.create_all(engine)
 
@@ -185,6 +185,7 @@ def triagem_arquivos(cabecalho, user, name=None, binary=None):
         status = gravar_arquivo(nome=name, binario=binary, usuario=user)
     elif cabecalho == 'D':
         status = acessa_arquivo_por_nome(name)
+    print(status)
     return status
 
 
@@ -204,7 +205,7 @@ def gravar_arquivo(nome, binario, usuario):
 def get_arquivos():
     session = get_session()
     # lista com todos os arquivos salvos
-    arquivos = session.query(Arquivo).all()
+    arquivos = session.query(Arquivo.nome).all()
     session.close()
     return arquivos
 
@@ -212,10 +213,17 @@ def get_arquivos():
 def acessa_arquivo_por_nome(nome):
     session = get_session()
     arquivo = session.query(Arquivo).filter_by(nome=nome).one()
-    print(arquivo.id, arquivo.nome, arquivo.usuario)
+
     return arquivo
 
+# l = triagem_arquivos('G', 'usuario')
+# print(list(map(type, l)))
+# # print(type(l))
+# def foo(n):
+#     return n._asdict()
+# print(list(map(foo, l)))
 
+# print(get_arquivos())
 #acessa_arquivo_por_nome('610 ADM - BOLETO 10 (04-2020).pdf')
 
 #mostra_todos_usuarios()

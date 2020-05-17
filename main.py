@@ -12,10 +12,10 @@ import login_client
 import file_client
 
 from kivy.config import Config
-Config.set('graphics','resizable',0)
+Config.set('graphics','resizable',1)
 Config.set('graphics', 'position', 'custom')
 Config.set('graphics', 'left', 450)
-Config.set('graphics', 'top',  70)
+Config.set('graphics', 'top',  35)
 
 from kivy.core.window import Window
 Window.size = (500, 650)
@@ -28,12 +28,19 @@ from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.factory import Factory
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, ListProperty, BooleanProperty, StringProperty
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.image import Image
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.recycleview.layout import LayoutSelectionBehavior
+from kivy.uix.behaviors import FocusBehavior
+from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.recyclegridlayout import RecycleGridLayout
+from kivy.uix.recycleview.views import RecycleDataViewBehavior
 
 usuario = ''
 PORT = 1234
@@ -222,7 +229,7 @@ class ChatLayout(Screen):
 
     def show_load(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Load file", content=content,
+        self._popup = Popup(title="Enviar Arquivo", content=content,
                             size_hint=(0.7, 0.7))
         self._popup.open()
     
@@ -247,26 +254,15 @@ class ChatLayout(Screen):
         self.dismiss_popup()
 
 
-    # def show_abrir(self):
-    #     content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-    #     self._popup = Popup(title="Load file", content=content,
-    #                         size_hint=(0.7, 0.7))
-    #     self._popup.open()
-
-
-    def abrir(self):
-        # global usuario
-        # # G: get
-        # dados = ['G', usuario]
-        # msg = pickle.dumps(dados)
-        # resultado = file_client.send(msg)
-        # arquivos = pickle.loads(resultado)
-
-        # for arquivo in arquivos:
-        #     print(arquivo.nome, '|', arquivo.usuario)
-        self.download('610 ADM - BOLETO 10 (04-2020).pdf')
+    def show_abrir(self):
+        content = TabelaArquivos(cancel=self.dismiss_popup)
+        self._popup = Popup(title="Baixar arquivo", content=content,
+                            size_hint=(0.7, 0.7))
+        self._popup.open()
+        # chatApp.criar_tabela_arquivos()
+        # chatApp.screen_manager.current = 'arquivos'
     
-
+    
     def download(self, nome):
         global usuario
         dado = ['D', usuario, nome]
@@ -275,11 +271,12 @@ class ChatLayout(Screen):
         despickle = pickle.loads(retorno)
         arquivo = despickle.binario
 
-        diretorio = r'E:\Documents\arquivos_viarede' 
+        diretorio = r'E:\Documents\arquivos_viarede'
         if not os.path.exists(diretorio):
             os.makedirs(diretorio)
-        with open(arquivo, 'wb') as f:
-            f.write()
+        with open(nome, 'wb') as f:
+            f.write(arquivo)
+        self.dismiss_popup()
 
 
     def logout(self):
@@ -288,26 +285,73 @@ class ChatLayout(Screen):
         chatApp.screen_manager.current = 'login'
 
 
-class TabelaArquivos(BoxLayout):
-    def __init__(self, arquivos):
-        self.add_widget(Label(text='Nome'))
+class TabelaArquivos(FloatLayout):
+    items = ListProperty([])
+    cancel = ObjectProperty(None)
+
+    # def cancel(self):
+    #     chatApp.screen_manager.current = 'chat'
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.abrir()
+
+
+    def abrir(self):
+        global usuario
+        # G: get
+        dados = ['G', usuario]
+        msg = pickle.dumps(dados)
+        resultado = file_client.send(msg)
+        arquivos = pickle.loads(resultado)
+
+
         for arquivo in arquivos:
-            self.add_widget(Label(text=arquivo))
-        
+            for coluna in arquivo:
+                self.items.append(coluna)
+        # return arquivos
+    
+    
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+
+class SelectableRecycleGridLayout(FocusBehavior, LayoutSelectionBehavior,
+                                  RecycleGridLayout):
+    ''' Adds selection and focus behaviour to the view. '''
+
+
+class SelectableButton(RecycleDataViewBehavior, Button):
+    ''' Add selection support to the Button '''
+    index = None
+    selected = BooleanProperty(False)
+    selectable = BooleanProperty(True)
+
+    def refresh_view_attrs(self, rv, index, data):
+        ''' Catch and handle the view changes '''
+        self.index = index
+        return super(SelectableButton, self).refresh_view_attrs(rv, index, data)
+
+    def on_touch_down(self, touch):
+        ''' Add selection on touch down '''
+        if super(SelectableButton, self).on_touch_down(touch):
+            return True
+        if self.collide_point(*touch.pos) and self.selectable:
+            return self.parent.select_with_touch(self.index, touch)
+
+    def apply_selection(self, rv, index, is_selected):
+        ''' Respond to the selection of items in the view. '''
+        self.selected = is_selected
+
+    def on_press(self):
+        pass
+        app = App.get_running_app()
+        app.screen_manager.get_screen(name='chat').download(self.text)
+
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
-
-
-class SaveDialog(FloatLayout):
-    save = ObjectProperty(None)
-    text_input = ObjectProperty(None)
-    cancel = ObjectProperty(None)
-
-
-class ArquivosTable(GridLayout):
-    pass
 
 
 class InfoPage(Screen):
@@ -335,13 +379,20 @@ class Test(App):
 
         Factory.register('ChatLayout', cls=ChatLayout)
         Factory.register('LoadDialog', cls=LoadDialog)
-        Factory.register('SaveDialog', cls=SaveDialog)
+        # Factory.register('TabelaArquivos', cls=TabelaArquivos)
 
 
         return self.screen_manager
 
     def criar_pagina_de_chat(self):
         self.screen_manager.add_widget(ChatLayout(name='chat'))
+    
+
+    def criar_tabela_arquivos(self):
+        self.tabela = TabelaArquivos()
+        screen = Screen(name='arquivos')
+        screen.add_widget(self.tabela)
+        self.screen_manager.add_widget(screen)
 
 
 def mostrar_erro(message):
