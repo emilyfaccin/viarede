@@ -274,7 +274,7 @@ class ChatLayout(Screen):
         diretorio = r'E:\Documents\arquivos_viarede'
         if not os.path.exists(diretorio):
             os.makedirs(diretorio)
-        with open(nome, 'wb') as f:
+        with open(f'{diretorio}\\{nome}', 'wb') as f:
             f.write(arquivo)
         self.dismiss_popup()
 
@@ -289,8 +289,6 @@ class TabelaArquivos(FloatLayout):
     items = ListProperty([])
     cancel = ObjectProperty(None)
 
-    # def cancel(self):
-    #     chatApp.screen_manager.current = 'chat'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -379,7 +377,6 @@ class Test(App):
 
         Factory.register('ChatLayout', cls=ChatLayout)
         Factory.register('LoadDialog', cls=LoadDialog)
-        # Factory.register('TabelaArquivos', cls=TabelaArquivos)
 
 
         return self.screen_manager
