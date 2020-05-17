@@ -218,8 +218,8 @@ class ChatLayout(Screen):
         self.ids.history.text = status
 
 
-    # def adiciona_chat_historico(self, mensagem):
-    #     self.ids.history.text += f'\n{mensagem}'
+    def adiciona_chat_historico(self, mensagem):
+        self.ids.history.text += f'\n{mensagem}'
 
 
     def enviar_mensagem(self):
@@ -276,7 +276,7 @@ class ChatLayout(Screen):
         despickle = pickle.loads(retorno)
         arquivo = despickle.binario
 
-        diretorio = r'E:\Documents\arquivos_viarede'
+        diretorio = r'E:\Documents\viarede_arquivos'
         if not os.path.exists(diretorio):
             os.makedirs(diretorio)
         with open(f'{diretorio}\\{nome}', 'wb') as f:
