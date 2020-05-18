@@ -223,7 +223,7 @@ def acessa_arquivo_por_nome(nome):
 
     return arquivo
 
-print(triagem_arquivos('H', 'user'))
+# print(triagem_arquivos('H', 'user'))
 # l = triagem_arquivos('G', 'usuario')
 # print(list(map(type, l)))
 # # print(type(l))
