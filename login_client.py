@@ -1,7 +1,7 @@
 import socket
-#from main import SERVER_IP
+from main import SERVER_IP
 
-SERVER_IP = '192.168.56.1' #
+# SERVER_IP = '192.168.56.1' #
 IP = SERVER_IP
 PORT = 1236
 

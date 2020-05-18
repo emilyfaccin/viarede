@@ -1,7 +1,13 @@
+import sys
+try:
+    SERVER_IP = sys.argv[1]
+    print(SERVER_IP)
+except:
+    raise AttributeError('IP do servidor não informado')
+# SERVER_IP = '192.168.1.4'
 import kivy
 from kivy.app import App
 from kivy.clock import Clock
-import sys
 import os
 import socket
 import pickle
@@ -44,12 +50,6 @@ from kivy.uix.recycleview.views import RecycleDataViewBehavior
 
 usuario = ''
 PORT = 1234
-# try:
-#     SERVER_IP = sys.argv[1]
-# except:
-#     raise AttributeError('IP do servidor não informado')
-SERVER_IP = '192.168.56.1'
-HEADER = 10
 
 
 class Login(Screen):
